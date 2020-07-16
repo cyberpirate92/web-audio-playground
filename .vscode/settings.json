@@ -1,0 +1,4 @@
+{
+    "editor.detectIndentation": false,
+    "javascript.implicitProjectConfig.experimentalDecorators": true
+}
