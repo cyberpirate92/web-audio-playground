@@ -1,5 +1,9 @@
 export const IMPLUSE_RESPONSES = [
     {
+        filePath: './assets/impulse-responses/silence.wav',
+        name: 'None',
+    },
+    {
         filePath: './assets/impulse-responses/big-hall.wav',
         name: 'big-hall',
     },

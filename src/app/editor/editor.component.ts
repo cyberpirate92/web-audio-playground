@@ -71,9 +71,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
     
     constructor(public audioService: AudioService) {
-        this.volume = 1;
-        this.filterType = 'allpass';
-        this.impulseResponse = null;
+        
     }
     
     ngOnInit(): void {
@@ -81,11 +79,17 @@ export class EditorComponent implements OnInit, OnDestroy {
             this.audioService.setCanvasForOscillioscope(this.canvas.nativeElement);
         }
         this.audioService.playerStatChanged$.pipe(takeUntil(this.destroyed$)).subscribe(state => {
-            console.log('Player state changed', state);
             this.isPlaying = state === PlayerState.PLAYING;
         });
 
-        this.audioService.isLoading$.pipe(takeUntil(this.destroyed$)).subscribe(value => this.isLoading = value);
+        this.audioService.isLoading$.pipe(takeUntil(this.destroyed$)).subscribe(value => {
+            this.isLoading = value;
+            if (!value) {
+                this.volume = 1;
+                this.filterType = 'allpass';
+                this.impulseResponse = IMPLUSE_RESPONSES[0].name;
+            }
+        });
         
         if (this.audioFileUrl) {
             this.audioService.loadUrl(this.audioFileUrl);

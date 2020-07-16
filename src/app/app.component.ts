@@ -22,10 +22,8 @@ export class AppComponent {
     }
 
     public onFileInput(event: InputEvent) {
-        console.log('File selected', event);
         if (this.audioInputRef.nativeElement.files.length > 0) {
             this.audioFileUrl = window.URL.createObjectURL(this.audioInputRef.nativeElement.files.item(0));
-            console.log('Set Audio file Url', this.audioFileUrl);
         } else {
             console.warn('NO FILE SELECTED');
         }
@@ -34,7 +32,6 @@ export class AppComponent {
     public loadSample(url: string) {
         if (url) {
             this.audioFileUrl = url;
-            console.log('Set Audio file Url', url);
         }
     }
 }

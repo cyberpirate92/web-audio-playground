@@ -1,7 +1,6 @@
-<div class="row alert alert-info" *ngIf="isLoading">
-    <div class="col-12">
-        <i class="fa fa-spin fa-spinner"></i> <strong>Loading file. This could take some time, please wait</strong>
-    </div>
+<div class="alert alert-info" role="alert" *ngIf="isLoading">
+    <h4 class="alert-heading">Loading Assets</h4>
+    <p><i class="fa fa-spin fa-spinner"></i> Loading assets can take a while, please wait</p>
 </div>
 <div class="row mt-4 justify-content-md-center">
     <div class="col-12">
@@ -14,7 +13,7 @@
                             <h5 class="card-title text-primary">Biquad filter</h5>
                             <div class="card-text">Select a filter from the options below</div>
                             <div class="form-group mt-2">
-                                <select class="form-control" [(ngModel)]="filterType">
+                                <select class="form-control" [(ngModel)]="filterType" [disabled]="isLoading">
                                     <option value="allpass" selected>No Filter</option>
                                     <option value="bandpass">Bandpass</option>
                                     <option value="highpass">High pass</option>
@@ -39,11 +38,11 @@
                             <h5 class="card-title text-primary">Stereo Panner</h5>
                             <div class="card-text">Shift Audio to either the left or right</div>
                             <div class="form-group mt-2">
-                                <input type="range" max="1" min="-1" value="0" step="0.1" [(ngModel)]="stereoPan">
+                                <input type="range" max="1" min="-1" value="0" step="0.1" [(ngModel)]="stereoPan" [disabled]="isLoading">
                             </div>
                         </div>
                     </div>
-
+                    
                     <div class="w-100"></div>
                     
                     <div class="col-sm-12 col-md card bg-light">
@@ -51,8 +50,7 @@
                             <h5 class="card-title text-primary">Convolver (Reverb effects)</h5>
                             <div class="card-text">The convolver requires a impulse response signal to be provided, select one from the dropdown to add a reverb effect to the audio</div>
                             <div class="form-group mt-2">
-                                <select [(ngModel)]="impulseResponse" class="form-control">
-                                    <option value="null">No Reverb</option>
+                                <select [(ngModel)]="impulseResponse" class="form-control" [disabled]="isLoading">
                                     <option *ngFor="let item of IMPULSE_RESPONSES" [value]="item.name">{{item.name}}</option>
                                 </select>
                             </div>

@@ -57,7 +57,7 @@ export class AudioService {
             .connect(this.audioContext.destination);
         
         this.dataArray = new Uint8Array(this.analyserNode.frequencyBinCount);
-        this.isLoading$ = new BehaviorSubject(false);
+        this.isLoading$ = new BehaviorSubject(true);
         this.playerStatChanged$ = new BehaviorSubject(PlayerState.STOPPED);
         this.shouldLoopAudio = true;
     }
@@ -70,17 +70,15 @@ export class AudioService {
         }).subscribe(async (arraybuffer) => {
             this.originalAudioBuffer = await this.audioContext.decodeAudioData(arraybuffer);
             this.audioSource.buffer = this.originalAudioBuffer;
-            this.isLoading$.next(false);
             await this.loadImpluseResponseFiles();
         }, (error) => {
-            console.log(error);
+            console.error(error);
             this.isLoading$.next(false);
         });
     }
     
     public async loadFile(file: File) {
         try {
-            console.log('Recieved file', file);
             let fileReader = new FileReader();
             fileReader.addEventListener('loadend', async () => {
                 try {
