@@ -2,7 +2,7 @@
     <h4 class="alert-heading">Loading Assets</h4>
     <p><i class="fa fa-spin fa-spinner"></i> Loading assets can take a while, please wait</p>
 </div>
-<div class="row mt-4 justify-content-md-center">
+<div class="row justify-content-md-center" style="margin-bottom: 75px;">
     <div class="col-12">
         <div class="row">
             <div class="offset-md-3"></div>
@@ -51,6 +51,7 @@
                             <div class="card-text">The convolver requires a impulse response signal to be provided, select one from the dropdown to add a reverb effect to the audio</div>
                             <div class="form-group mt-2">
                                 <select [(ngModel)]="impulseResponse" class="form-control" [disabled]="isLoading">
+                                    <option value="null">No Reverb</option>
                                     <option *ngFor="let item of IMPULSE_RESPONSES" [value]="item.name">{{item.name}}</option>
                                 </select>
                             </div>
@@ -63,6 +64,43 @@
                             <div class="card-text">Visualise the audio waveform</div>
                             <div class="text-center mt-2">
                                 <canvas #waveform></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md card bg-light">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-primary">Dynamics Compressor</h5>
+                            <div class="card-text">Lowers the volume of the loudest parts of the signal in order to help prevent clipping and distortion</div>                            
+                            <hr />
+                            <div class="form-group">
+                                <label>Threshold (decibels)</label>
+                                <div>
+                                    <input type="range" [max]="audioService.dynamicsCompressor.threshold.maxValue" [min]="audioService.dynamicsCompressor.threshold.minValue" [step]="stepSize.compressor.threshold" [(ngModel)]="compressorThreshold" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Attack (seconds)</label>
+                                <div>
+                                    <input type="range" [max]="audioService.dynamicsCompressor.attack.maxValue" [min]="audioService.dynamicsCompressor.attack.minValue" [step]="stepSize.compressor.attack" [(ngModel)]="compressorAttackDuration" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Release (seconds)</label>
+                                <div>
+                                    <input type="range"[max]="audioService.dynamicsCompressor.release.maxValue" [min]="audioService.dynamicsCompressor.release.minValue" [step]="stepSize.compressor.release" [(ngModel)]="compressorReleaseDuration" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Knee (decibels)</label>
+                                <div>
+                                    <input type="range" [max]="audioService.dynamicsCompressor.knee.maxValue" [min]="audioService.dynamicsCompressor.knee.minValue" [step]="stepSize.compressor.knee" [(ngModel)]="compressorKnee" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Ratio (decibels)</label>
+                                <div>
+                                    <input type="range" [max]="audioService.dynamicsCompressor.ratio.maxValue" [min]="audioService.dynamicsCompressor.ratio.minValue" [step]="stepSize.compressor.ratio" [(ngModel)]="compressorRatio" />
+                                </div>
                             </div>
                         </div>
                     </div>

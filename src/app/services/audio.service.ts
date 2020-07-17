@@ -1,7 +1,7 @@
-import { Injectable, ElementRef, TestabilityRegistry } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin } from 'rxjs';
 import { PlayerState, IMPLUSE_RESPONSES } from '../models';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class AudioService {
@@ -14,6 +14,7 @@ export class AudioService {
     public stereoPannerNode: StereoPannerNode;
     public convolver: ConvolverNode;
     public biquadFilter: BiquadFilterNode;
+    public dynamicsCompressor: DynamicsCompressorNode;
     private _loopEnabled: boolean;
     
     private canvas: HTMLCanvasElement;
@@ -45,16 +46,20 @@ export class AudioService {
         this.biquadFilter = this.audioContext.createBiquadFilter();
         this.pannerNode = this.audioContext.createPanner();
         this.stereoPannerNode = this.audioContext.createStereoPanner();
+        this.dynamicsCompressor = this.audioContext.createDynamicsCompressor();
         this.convolver = this.audioContext.createConvolver();
-        
-        this.audioSource
-            .connect(this.biquadFilter)
-            .connect(this.stereoPannerNode)
-            .connect(this.pannerNode)
-            .connect(this.convolver)
-            .connect(this.analyserNode)
-            .connect(this.audioGainNode)
-            .connect(this.audioContext.destination);
+
+        this.convolver.buffer = null;        
+
+        // Audio Graph:
+        // AudioSource -> Biquad Filter -> Stereo Panner -> Panner -> Dynamics Compressor -> Analyser -> Destination (Speakers/Headphones, etc)
+        this.audioSource.connect(this.biquadFilter);
+        this.biquadFilter.connect(this.stereoPannerNode);
+        this.stereoPannerNode.connect(this.pannerNode);
+        this.pannerNode.connect(this.dynamicsCompressor);
+        this.dynamicsCompressor.connect(this.analyserNode);
+        this.analyserNode.connect(this.audioGainNode);
+        this.audioGainNode.connect(this.audioContext.destination);
         
         this.dataArray = new Uint8Array(this.analyserNode.frequencyBinCount);
         this.isLoading$ = new BehaviorSubject(true);
@@ -223,12 +228,18 @@ export class AudioService {
     public setImpulseResponse(value: string) {
         let index = IMPLUSE_RESPONSES.findIndex(e => e.name === value);
         if (index < 0) {
-            console.warn('Cannot load impulse response: Invalid name');
-            this.convolver.buffer = null;
-            //this.convolver.disconnect()
+            this.pannerNode.disconnect();
+            this.convolver.disconnect();
+            this.pannerNode.connect(this.dynamicsCompressor);
         } else {
+            let reconnectRequired = this.convolver.buffer == null || this.convolver.buffer.length === 0;
             this.convolver.buffer = this.impluseResponseAudioBuffers[index];
-            //this.convolver.connect(this.pannerNode);
+            if (reconnectRequired) {
+                this.pannerNode.disconnect();
+                this.convolver.disconnect();
+                this.pannerNode.connect(this.convolver);
+                this.convolver.connect(this.dynamicsCompressor);
+            }
         }
     }
 

@@ -20,7 +20,7 @@
                             <li *ngFor="let sample of SAMPLE_AUDIO" class="list-group-item">
                                 <button class="btn btn-lg btn-block btn-success" (click)="loadSample(sample.filename)">
                                     <i class="fa fa-music"></i>
-                                    {{ sample.name }}
+                                    {{ sample.name }} ({{ sample.duration }})
                                 </button>
                             </li>
                         </ul>
